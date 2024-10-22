@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/models/area_model.dart';
-
+import 'package:meal_app/shared/cubit/egyptian_cubit/Meal_cubit.dart';
+import 'package:meal_app/Screens/meal_screen.dart';
 import 'package:meal_app/shared/constants/constants.dart';
+
+import 'package:meal_app/models/area_model.dart';
 
 class MealCard extends StatelessWidget {
   final Meals meal;
@@ -11,12 +13,13 @@ class MealCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // 1- get the meal's data
-        // 2- navigate to the meal's screen
+        Meals_cubit.get(context).getMealDetails(meal.idMeal!);
+        Navigator.push(context,
+        MaterialPageRoute(builder: (_) => MealScreen()));
       },
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(8.0),
           child: Stack(
             children: [
               ClipRRect(

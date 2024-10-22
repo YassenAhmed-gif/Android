@@ -1,25 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/models/meal_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meal_app/shared/cubit/egyptian_cubit/egyptian_cubit.dart';
 import 'package:meal_app/shared/constants/constants.dart';
+import 'package:meal_app/shared/cubit/egyptian_cubit/Meal_cubit.dart';
+import 'package:meal_app/models/meal_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class MealScreen extends StatefulWidget {
-  final String mealId;
-
-  const MealScreen({super.key, required this.mealId});
-
-  @override
-  State<MealScreen> createState() => _MealScreenState();
-}
-
-class _MealScreenState extends State<MealScreen> {
-
-  @override
-  void initState() {
-    super.initState();
-    EgyptianCubit.get(context).getMealDetails(widget.mealId);
-  }
+class MealScreen extends StatelessWidget {
+  const MealScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +14,7 @@ class _MealScreenState extends State<MealScreen> {
       appBar: AppBar(
         title: const Text('Meal Details'),
       ),
-      body: BlocConsumer<EgyptianCubit, EgyptianState>(
+      body: BlocConsumer<Meals_cubit, Meals_state>(
         listener: (context, state) {},
         builder: (context, state) {
           if (state is GetMealLoading) {
@@ -39,69 +26,93 @@ class _MealScreenState extends State<MealScreen> {
               child: Text("Error while getting meal data: ${state.error}"),
             );
           } else {
-            var cubit = EgyptianCubit.get(context);
-            var meal = cubit.mealData?.meals?.first;
-
-            if (meal == null) {
-              return const Center(child: Text("No meal found."));
-            }
-
-            return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Meal Title
-                      Text(
-                        meal.strMeal ?? 'Unknown Meal',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+            var cubit = Meals_cubit.get(context);
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      child: Text(cubit.mealData!.meals![0].strMeal??"UnKnown",
+                        style: TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      height: 250,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.network(cubit.mealData!.meals![0].strMealThumb??PLACEHOLDERIMAGE,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                      const SizedBox(height: 10),
-
-                      // Meal Image
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              meal.strMealThumb ?? PLACEHOLDERIMAGE,
-                              fit: BoxFit.cover,
-                              height: 200,
-                              width: double.infinity,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                  PLACEHOLDERIMAGE,
-                                  height: 200,
-                                  width: double.infinity,
-                                );
-                              },
+                    ),
+                    Text(cubit.mealData!.meals![0].strInstructions??"NO Instruction",
+                      style: TextStyle(
+                          fontSize:20,
+                          color: Colors.black
+                      ),
+                      // maxLines: 3,
+                      // overflow: TextOverflow.ellipsis,
+                    ),
+                    Row(
+                      children: [
+                        Text("To know more information",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        GestureDetector(
+                          onTap: ()async{
+                            if (!await launchUrl(Uri.parse(cubit.mealData!.meals![0].strYoutube!))) {
+                              throw Exception('Could not launch ${cubit.mealData!.meals![0].strYoutube!}');
+                            }
+                          },
+                          child: Text("click here",
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.blueAccent.shade700
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                    Text("Ingredient&&Measure",
+                      style: TextStyle(
+                          fontSize:25,
+                          color: Colors.black
                       ),
-                      const SizedBox(height: 20),
-
-                      // Only show Alternate Drink section if available
-                      if (meal.strDrinkAlternate != null)
-                        Text(
-                          'Alternate Drink: ${meal.strDrinkAlternate}',
-                          style: const TextStyle(fontSize: 18, color: Colors.grey),
-                        ),
-                      const SizedBox(height: 20),
-
-                      // Meal Instructions or Description
-                      Text(
-                        meal.strInstructions ?? 'No instructions available.',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
+                    ),
+                    ListView.separated(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap:true ,
+                      itemBuilder: (context,index){
+                        return RowIngredient(cubit.mealData!.meals![0].strIngredient1!, cubit.mealData!.meals![0].strMeasure1!);
+                      },
+                      separatorBuilder: (context,index){
+                        return SizedBox(
+                          height: 20,
+                        );
+                      },
+                      itemCount: 2,
+                    )
+                  ],
                 ),
               ),
             );
@@ -110,4 +121,63 @@ class _MealScreenState extends State<MealScreen> {
       ),
     );
   }
+  Widget RowIngredient(String Ingredient,String Measure){
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text(Ingredient,
+          style: TextStyle(
+              fontSize:15,
+              color: Colors.black
+          ),
+        ),
+
+        Text(Measure,
+          style: TextStyle(
+              fontSize:20,
+              color: Colors.black
+          ),
+        ),
+      ],
+    );
+  }
+
+//             return SafeArea(
+//               child: Padding(
+//                 padding: const EdgeInsets.all(10.0),
+//                 child: SingleChildScrollView(
+//                   scrollDirection: Axis.vertical,
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Container(
+//                         width: double.infinity,
+//                         child: Text(
+//                           cubit.mealData!.meals![0].strMeal! ?? "UnKnown",
+//                           maxLines: 1,
+//                           overflow: TextOverflow.ellipsis,
+//                           textAlign: TextAlign.center,
+//                         ),
+//                       ),
+//                       Container(
+//                         width: double.infinity,
+//                         height:  250,
+//                         child: ClipRRect(
+//                           borderRadius: BorderRadius.circular(12),
+//                           child: Image.network(cubit.mealData!.meals![0].strMealThumb! ?? PLACEHOLDERIMAGE,
+//                           fit: BoxFit.cover
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             );
+//           }
+//         },
+//       ),
+//     );
+//   }
 }

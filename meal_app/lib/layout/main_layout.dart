@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:meal_app/Screens/home_screen.dart';
 import 'package:meal_app/Screens/Categories_screen.dart';
 import 'package:meal_app/Screens/random_meal.dart';
+import 'package:meal_app/shared/cubit/egyptian_cubit/Meal_cubit.dart';
+
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -11,12 +13,18 @@ class MainLayout extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<MainLayout> {
-  int index = 0;
   List<Widget> screens = [
     HomeScreen(),
     CategoriesScreen(),
     RandomMeal(),
   ];
+
+  PageController pageCntl = PageController();
+  void dispose(){
+    super.dispose();
+    pageCntl.dispose();
+  }
+  int index = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +32,8 @@ class _MainLayoutState extends State<MainLayout> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: index,
         onTap: (value) {
-          index = value;
           setState(() {
-
+            index = value;
           });
         },
         unselectedItemColor: Colors.grey,
@@ -46,9 +53,9 @@ class _MainLayoutState extends State<MainLayout> {
           ),
           BottomNavigationBarItem(
               icon: Icon(
-                Icons.sunny,
+                Icons.set_meal_outlined,
               ),
-              label: "Search"
+              label: "AI feature"
           ),
         ],
       ),

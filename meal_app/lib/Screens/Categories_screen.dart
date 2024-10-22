@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meal_app/shared/cubit/egyptian_cubit/egyptian_cubit.dart';
+import 'package:meal_app/shared/cubit/egyptian_cubit/Meal_cubit.dart';
 import 'package:meal_app/shared/utils/category_card.dart';
 
 class CategoriesScreen extends StatefulWidget {
@@ -15,12 +15,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   void initState() {
     super.initState();
-    EgyptianCubit.get(context).getCategoryData();
+    Meals_cubit.get(context).getCategoryData();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<EgyptianCubit, EgyptianState>(
+      body: BlocConsumer<Meals_cubit, Meals_state>(
         listener: (context, state) {},
         builder: (context, state) {
           if(state is GetCategoryDataLoading){
@@ -33,8 +33,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   "Error while getting home data${state.error}"
               ),
             );
-          } else if (state is GetCategoryDataSuccessfully && EgyptianCubit.get(context).categoryData!.categories != null){
-            var cubit = EgyptianCubit.get(context);
+          } else if (state is GetCategoryDataSuccessfully && Meals_cubit.get(context).categoryData!.categories != null){
+            var cubit = Meals_cubit.get(context);
             return Padding(
               padding: const EdgeInsets.all(20.0),
               child: GridView.builder(

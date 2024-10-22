@@ -1,9 +1,9 @@
-class meal_model {
+class meals_model {
   List<Meals>? meals;
 
-  meal_model({this.meals});
+  meals_model({this.meals});
 
-  meal_model.fromJson(Map<String, dynamic> json) {
+  meals_model.fromJson(Map<String, dynamic> json) {
     if (json['meals'] != null) {
       meals = <Meals>[];
       json['meals'].forEach((v) {

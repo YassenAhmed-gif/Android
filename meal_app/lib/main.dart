@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meal_app/shared/cubit/egyptian_cubit/egyptian_cubit.dart';
+import 'package:meal_app/shared/cubit/egyptian_cubit/Meal_cubit.dart';
 import 'package:meal_app/shared/network/remote/dio_helper.dart';
 import 'package:meal_app/Screens/Categories_screen.dart';
 import 'package:meal_app/Screens/home_screen.dart';
@@ -20,10 +20,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => EgyptianCubit()..getHomeData(),
+      create: (context) => Meals_cubit()..getHomeData(),
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: MealScreen(mealId: "52772"),
+        home: MainLayout(),
       ),
     );
   }

@@ -5,19 +5,18 @@ import 'package:meta/meta.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meal_app/models/area_model.dart';
-import 'package:meal_app/shared/constants/constants.dart';
 import 'package:meal_app/shared/network/remote/dio_helper.dart';
 import 'package:meal_app/shared/network/remote/endPoints.dart';
 
-part 'egyptian_state.dart';
+part 'Meal_state.dart';
 
-class EgyptianCubit extends Cubit<EgyptianState> {
-  EgyptianCubit() : super(EgyptianInitial());
+class Meals_cubit extends Cubit<Meals_state> {
+  Meals_cubit() : super(EgyptianInitial());
 
-  static EgyptianCubit get(context) => BlocProvider.of(context);
+  static Meals_cubit get(context) => BlocProvider.of(context);
   area_model? homeData;
   category_model? categoryData;
-  meal_model? mealData;
+  meals_model? mealData;
 
   Future <void> getHomeData() async {
     emit(GetHomeDataLoading());
@@ -62,8 +61,8 @@ class EgyptianCubit extends Cubit<EgyptianState> {
         queryParameters: {'i': MealId}
       );
 
-      if(response.statusCode! == 200 && response.data["meals"]){
-        mealData = meal_model.fromJson(response.data);
+      if(response.statusCode! == 200 && response.data["meals"] != null){
+        mealData = meals_model.fromJson(response.data);
         emit(GetMealSuccessfully());
       } else {
         emit(GetMealWithError('no result'));
