@@ -24,7 +24,7 @@ class meals_model {
 class Meals {
   String? idMeal;
   String? strMeal;
-  Null? strDrinkAlternate;
+  String? strDrinkAlternate;
   String? strCategory;
   String? strArea;
   String? strInstructions;
@@ -46,11 +46,11 @@ class Meals {
   String? strIngredient13;
   String? strIngredient14;
   String? strIngredient15;
-  Null? strIngredient16;
-  Null? strIngredient17;
-  Null? strIngredient18;
-  Null? strIngredient19;
-  Null? strIngredient20;
+  String? strIngredient16;
+  String? strIngredient17;
+  String? strIngredient18;
+  String? strIngredient19;
+  String? strIngredient20;
   String? strMeasure1;
   String? strMeasure2;
   String? strMeasure3;
@@ -66,15 +66,15 @@ class Meals {
   String? strMeasure13;
   String? strMeasure14;
   String? strMeasure15;
-  Null? strMeasure16;
-  Null? strMeasure17;
-  Null? strMeasure18;
-  Null? strMeasure19;
-  Null? strMeasure20;
-  Null? strSource;
-  Null? strImageSource;
-  Null? strCreativeCommonsConfirmed;
-  Null? dateModified;
+  String? strMeasure16;
+  String? strMeasure17;
+  String? strMeasure18;
+  String? strMeasure19;
+  String? strMeasure20;
+  String? strSource;
+  String? strImageSource;
+  String? strCreativeCommonsConfirmed;
+  String? dateModified;
 
   Meals(
       {this.idMeal,

@@ -60,9 +60,9 @@ class Meals_cubit extends Cubit<Meals_state> {
         endPoint: LOOKUP,
         queryParameters: {'i': MealId}
       );
+      mealData = meals_model.fromJson(response.data);
 
-      if(response.statusCode! == 200 && response.data["meals"] != null){
-        mealData = meals_model.fromJson(response.data);
+      if(response.statusCode! == 200){
         emit(GetMealSuccessfully());
       } else {
         emit(GetMealWithError('no result'));

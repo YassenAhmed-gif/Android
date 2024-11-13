@@ -27,6 +27,10 @@ class MealScreen extends StatelessWidget {
             );
           } else {
             var cubit = Meals_cubit.get(context);
+            for (int i = 1; i<=20; i++){
+              cubit.mealData!.meals![0].strIngredient1
+            }
+
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: SingleChildScrollView(
@@ -48,6 +52,7 @@ class MealScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                     ),
+                    // if(cubit.mealData!.meals![0].strDrinkAlternate != null) => Text(cubit.mealData!.meals![0].strDrinkAlternate!),
                     Container(
                       width: double.infinity,
                       height: 250,
@@ -58,9 +63,21 @@ class MealScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text("Category: ${cubit.mealData!.meals![0].strCategory!}"),
+                          Text("country: ${cubit.mealData!.meals![0].strArea}"),
+                        ],
+                      ),
+                    ),
+
+
                     Text(cubit.mealData!.meals![0].strInstructions??"NO Instruction",
                       style: TextStyle(
-                          fontSize:20,
+                          fontSize:14,
                           color: Colors.black
                       ),
                       // maxLines: 3,
