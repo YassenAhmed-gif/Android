@@ -1,1 +1,0 @@
-const PRODUCTS = "products";
