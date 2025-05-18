@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ai_chat/shared/cubit/app_cubit/app_cubit.dart';
 import 'package:ai_chat/shared/cubit/auth_cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 
 import '../shared/cubit/auth_cubit/auth_cubit.dart';
 import '../shared/Widget/my_text_form_field.dart';
+import 'home_screen.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -30,12 +32,7 @@ class _RegisterState extends State<Register> {
             padding: const EdgeInsets.all(20.0),
             child: SingleChildScrollView(
               child: BlocConsumer<AuthCubit, AuthState>(
-                listener: (context, state) {
-                  print(state);
-                  if (state is PickedImageSuccessfully) {
-                    AuthCubit.get(context).cropImage();
-                  }
-                },
+                listener: (context, state) {},
                 builder: (context, state) {
                   var cubit = AuthCubit.get(context);
                   return Form(
@@ -107,6 +104,13 @@ class _RegisterState extends State<Register> {
                                     email: _emailController.text,
                                     password: _passwordController.text,
                                   );
+
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ChatBotHomeScreen()
+                                      ),
+                                          (Route<dynamic> route) => false);
                               }
                             },
                             child: Container(

@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meal_app/shared/constants/constants.dart';
-import 'package:meal_app/shared/cubit/egyptian_cubit/Meal_cubit.dart';
 import 'package:meal_app/models/meal_model.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meal_app/shared/cubit/egyptian_cubit/Meal_cubit.dart';
+import 'package:meal_app/shared/constants/constants.dart';
 
-class MealScreen extends StatelessWidget {
-  const MealScreen({super.key});
+class MealScreen extends StatefulWidget {
+  final String mealId;
+
+  const MealScreen({super.key, required this.mealId});
+
+  @override
+  State<MealScreen> createState() => _MealScreenState();
+}
+
+class _MealScreenState extends State<MealScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    Meals_cubit.get(context).getMealDetails(widget.mealId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,109 +40,68 @@ class MealScreen extends StatelessWidget {
             );
           } else {
             var cubit = Meals_cubit.get(context);
-            for (int i = 1; i<=20; i++){
-              cubit.mealData!.meals![0].strIngredient1
+            var meal = cubit.mealData?.meals?.first;
+
+            if (meal == null) {
+              return const Center(child: Text("No meal found."));
             }
 
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      child: Text(cubit.mealData!.meals![0].strMeal??"UnKnown",
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    // if(cubit.mealData!.meals![0].strDrinkAlternate != null) => Text(cubit.mealData!.meals![0].strDrinkAlternate!),
-                    Container(
-                      width: double.infinity,
-                      height: 250,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.network(cubit.mealData!.meals![0].strMealThumb??PLACEHOLDERIMAGE,
-                          fit: BoxFit.cover,
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Meal Title
+                      Text(
+                        meal.strMeal ?? 'Unknown Meal',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text("Category: ${cubit.mealData!.meals![0].strCategory!}"),
-                          Text("country: ${cubit.mealData!.meals![0].strArea}"),
-                        ],
-                      ),
-                    ),
+                      const SizedBox(height: 10),
 
-
-                    Text(cubit.mealData!.meals![0].strInstructions??"NO Instruction",
-                      style: TextStyle(
-                          fontSize:14,
-                          color: Colors.black
-                      ),
-                      // maxLines: 3,
-                      // overflow: TextOverflow.ellipsis,
-                    ),
-                    Row(
-                      children: [
-                        Text("To know more information",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        GestureDetector(
-                          onTap: ()async{
-                            if (!await launchUrl(Uri.parse(cubit.mealData!.meals![0].strYoutube!))) {
-                              throw Exception('Could not launch ${cubit.mealData!.meals![0].strYoutube!}');
-                            }
-                          },
-                          child: Text("click here",
-                            style: TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.blueAccent.shade700
+                      // Meal Image
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.network(
+                              meal.strMealThumb ?? PLACEHOLDERIMAGE,
+                              fit: BoxFit.cover,
+                              height: 200,
+                              width: double.infinity,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  PLACEHOLDERIMAGE,
+                                  height: 200,
+                                  width: double.infinity,
+                                );
+                              },
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    Text("Ingredient&&Measure",
-                      style: TextStyle(
-                          fontSize:25,
-                          color: Colors.black
                       ),
-                    ),
-                    ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap:true ,
-                      itemBuilder: (context,index){
-                        return RowIngredient(cubit.mealData!.meals![0].strIngredient1!, cubit.mealData!.meals![0].strMeasure1!);
-                      },
-                      separatorBuilder: (context,index){
-                        return SizedBox(
-                          height: 20,
-                        );
-                      },
-                      itemCount: 2,
-                    )
-                  ],
+                      const SizedBox(height: 20),
+
+                      // Only show Alternate Drink section if available
+                      if (meal.strDrinkAlternate != null)
+                        Text(
+                          'Alternate Drink: ${meal.strDrinkAlternate}',
+                          style: const TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      const SizedBox(height: 20),
+
+                      // Meal Instructions or Description
+                      Text(
+                        meal.strInstructions ?? 'No instructions available.',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -138,63 +110,4 @@ class MealScreen extends StatelessWidget {
       ),
     );
   }
-  Widget RowIngredient(String Ingredient,String Measure){
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Text(Ingredient,
-          style: TextStyle(
-              fontSize:15,
-              color: Colors.black
-          ),
-        ),
-
-        Text(Measure,
-          style: TextStyle(
-              fontSize:20,
-              color: Colors.black
-          ),
-        ),
-      ],
-    );
-  }
-
-//             return SafeArea(
-//               child: Padding(
-//                 padding: const EdgeInsets.all(10.0),
-//                 child: SingleChildScrollView(
-//                   scrollDirection: Axis.vertical,
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       Container(
-//                         width: double.infinity,
-//                         child: Text(
-//                           cubit.mealData!.meals![0].strMeal! ?? "UnKnown",
-//                           maxLines: 1,
-//                           overflow: TextOverflow.ellipsis,
-//                           textAlign: TextAlign.center,
-//                         ),
-//                       ),
-//                       Container(
-//                         width: double.infinity,
-//                         height:  250,
-//                         child: ClipRRect(
-//                           borderRadius: BorderRadius.circular(12),
-//                           child: Image.network(cubit.mealData!.meals![0].strMealThumb! ?? PLACEHOLDERIMAGE,
-//                           fit: BoxFit.cover
-//                           ),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             );
-//           }
-//         },
-//       ),
-//     );
-//   }
 }

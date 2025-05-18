@@ -1,3 +1,4 @@
+import 'package:ai_chat/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ai_chat/screens/Register_screen.dart';
@@ -70,8 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 70.0,
                     ),
                     BlocConsumer<AuthCubit, AuthState>(
-                      listener: (context, state) {
-                      },
+                      listener: (context, state) {},
                       builder: (context, state) {
                         var cubit = AuthCubit.get(context);
                         if(state is LoginLoading){
@@ -94,6 +94,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 email: _emailController.text,
                                 password: _passwordController.text,
                               );
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ChatBotHomeScreen()
+                                  ),
+                                  (Route<dynamic> route) => false);
                             }
                           },
                           child: Container(

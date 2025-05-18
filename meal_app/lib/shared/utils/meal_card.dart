@@ -15,7 +15,7 @@ class MealCard extends StatelessWidget {
       onTap: () {
         Meals_cubit.get(context).getMealDetails(meal.idMeal!);
         Navigator.push(context,
-        MaterialPageRoute(builder: (_) => MealScreen()));
+        MaterialPageRoute(builder: (_) => MealScreen(mealId: meal.idMeal!)));
       },
       child: Card(
         child: Padding(

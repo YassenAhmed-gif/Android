@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bloc/bloc.dart';
 import 'package:meal_app/shared/cubit/egyptian_cubit/Meal_cubit.dart';
+import 'package:meal_app/shared/network/remote/dio_helper.dart';
 import 'package:meal_app/shared/utils/meal_card.dart';
+
+import 'package:meal_app/models/area_model.dart';
+import 'package:meal_app/shared/constants/constants.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -9,16 +14,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Main Dish",
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
-              color: Colors.white
-          ),
-        ),
-        backgroundColor: Colors.orange,
-      ),
       body: BlocConsumer<Meals_cubit, Meals_state>(
         listener: (context, state) {},
         builder: (context, state) {
@@ -43,12 +38,18 @@ class HomeScreen extends StatelessWidget {
                     crossAxisSpacing: 20,
                 ),
                 itemBuilder: (context, index) {
-                  return MealCard(meal: cubit.homeData!.meals![index]);
+                  return GestureDetector(
+                    onTap: () {
+      
+                    },
+                    child: MealCard(meal: cubit.homeData!.meals![index]),
+                  );
                 },
                 itemCount: cubit.homeData!.meals!.length,
               ),
             );
           }
+      
         },
       ),
     );
